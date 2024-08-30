@@ -1,0 +1,52 @@
+---
+services:
+  jest:
+    image: yousrar/notes_manager:latest
+    container_name: jest
+    hostname: jest
+    command: jest
+    build: 
+      dockerfile: Dockerfile
+      context: .
+    volumes:
+      - ./api:/api
+      - ./web:/web
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+    depends_on:
+      database:
+        condition: service_healthy 
+  
+  database:
+    container_name: database
+    hostname: database
+    # image: mariadb:11.2-jammy
+    image: mariadb:11-noble
+    command: --init-file /data/application/init.sql --default-authentication-plugin=mysql_native_password --bind-address 0.0.0.0
+    volumes:
+      - ./db/init.sql:/data/application/init.sql
+      - volume_mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+      # MARIADB_AUTO_UPGRADE: 1
+      MYSQL_DATABASE: ${DB_HOST}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_NAME: ${DB_NAME}
+    healthcheck:
+      # test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      # test: ["CMD", "mariadbadmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost" , '-u', "${DB_USER}" , "-p${DB_PASSWORD}" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      
+volumes:
+  volume_mysql:
+networks:
+  bridge:
+    name: notes
