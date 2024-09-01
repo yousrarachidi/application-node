@@ -1,0 +1,28 @@
+services:
+  api:
+    image: yousrar/notes_manager:latest
+    container_name: api
+    hostname: api
+    command: npm --prefix api start
+    build: 
+      dockerfile: ./docker/Dockerfile-notes-manager
+      context: ../
+    volumes:
+      - ../api:/api
+      # - ../web:/web
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      API_BASE_URL: ${API_BASE_URL}
+    ports:
+      - "3000:3000"
+    #depends_on:
+      #jest:
+        #condition: service_completed_successfully
+volumes:
+  volume_mysql:
+networks:
+  bridge:
+    name: notes        

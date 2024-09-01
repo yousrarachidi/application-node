@@ -1,0 +1,32 @@
+name: test docker compose
+
+on: [push]
+
+jobs:
+  test_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: docker/setup-buildx-action@v2
+        with:
+          driver: docker-container
+
+      - name: Build the [frontend] image with cache
+        uses: docker/build-push-action@v4
+        with:
+          load: true
+          context: ../
+          file: ./docker/Dockerfile-notes-manager
+          tags: |
+            latest
+          #cache-from: type=gha,scope=$GITHUB_REF_NAME-frontend-dev
+          #cache-to: type=gha,scope=$GITHUB_REF_NAME-frontend-dev,mode=max
+          
+
+      - name: Run test
+        run: |
+          docker ps -a
+          docker run yousrar/notes_manager
+          docker logs
