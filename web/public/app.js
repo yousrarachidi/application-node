@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const notesList = document.getElementById('notes-list');
 
   // Utiliser directement l'URL de l'API
-  const apiUrl = 'http://localhost:3000';
-
+  //const apiUrl = 'http://localhost:3000';
+  const apiUrl = 'http://api:3000';
   // Charger les notes existantes
   fetch(`${apiUrl}/api/notes`)
     .then(response => response.json())
