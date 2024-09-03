@@ -27,6 +27,4 @@ jobs:
 
       - name: Run test
         run: |
-          docker ps -a
-          docker run yousrar/notes_manager
-          docker logs
+          docker  compose --env-file=docker/.env-local   --file=docker/docker-compose-jest.yaml  --file=docker/docker-compose-bdd.yaml --file=docker/docker-compose-api.yaml --file=docker/docker-compose-web.yaml    build  --no-cache
